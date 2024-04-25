@@ -1,98 +1,199 @@
 # IMPORTS
-from typing import List, Tuple
+from typing import Tuple
 
 import numpy as np
 from kneed import KneeLocator
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, DBSCAN, OPTICS
 from sklearn.decomposition import PCA
+from sklearn.metrics import silhouette_score
+from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
+from tqdm import trange
+
+# CONSTANTS
+DIMENSIONALITY_REDUCTION_METHOD = "pca"
 
 
 # HELPER FUNCTIONS
-def get_best_kmeans(data: List[int], k_max: int = 10) -> Tuple[int, KMeans]:
+def scale_coordinates(coordinates: np.ndarray[float]) -> np.ndarray[float]:
     """
-    Finds the best `k` value for the K-means algorithm.
+    Scales the coordinates.
 
-    :param data: the data to use for K-means clustering.
-    :param k_max: maximum value of `k` to consider.
-    :returns: the best `k` value for K-means clustering.
-    :returns: the best model that uses the `k` value for clustering.
+    :param coordinates: coordinates to scale.
+    :returns: scaled coordinates using the `StandardScaler`.
     """
 
-    # First scale the data
     scaler = StandardScaler()
-    scaled_features = scaler.fit_transform(data)
+    return scaler.fit_transform(coordinates)
 
-    k_max = min(k_max, len(scaled_features))
 
-    # Try clustering with different values of k
-    kmodels = []
-    for k in range(1, k_max+1):
-        kmodel = KMeans(
-            n_clusters=k,
-            init="random",
-            n_init=10,  # Try initialising the model 10 times and get the best result
-            max_iter=500,
-            random_state=42
-        )
-        kmodel.fit(scaled_features)
-        kmodels.append(kmodel)
-    sse = [x.inertia_ for x in kmodels]
+def reduce_dimensionality(coordinates: np.ndarray[float], ndim: int = 3, method: str = "pca") -> np.ndarray[float]:
+    """
+    Reduces the dimensionality of the coordinates.
 
-    # Use the Elbow method to find the best number if clusters to use
-    kneelocator = KneeLocator(
-        range(1, k_max+1), sse, curve="convex", direction="decreasing"
-    )
-    k_best = kneelocator.elbow
-    if k_best is None:  # Can't find a good cluster number
-        k_best = k_max
+    :param coordinates: coordinates to scale.
+    :param ndim: number of dimensions for the resulting coordinates.
+    :param method: method for dimensionality reduction. Valid methods are 'pca'.
+    :returns: reduced coordinates.
+    """
+
+    valid_methods = {"pca"}
+
+    method = method.lower()
+    if method not in valid_methods:
+        raise ValueError(f"Invalid method '{method}' for dimensionality reduction")
     
-    best_model = kmodels[k_best-1]
+    if method == "pca":
+        dimensionality_reducer = PCA(ndim)
+    
+    return dimensionality_reducer.fit_transform(coordinates) 
 
-    return k_best, best_model
 
-
-def get_labels_using_kmeans(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+# MAIN FUNCTIONS
+def get_labels_using_kmeans(coordinates: np.ndarray[float], k_max: int = 10) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
     """
     Gets the labels for each of the coordinates using K-means clustering.
     
     :param coordinates: coordinates to label.
+    :param k_max: Maximum `k` value for use in the K-means model.
     :return: the reduced coordinates for displaying.
     :return: the labels for each of the reduced coordinates.
     :return: the unique labels.
     """
         
-    # Use K-Means clustering
-    k_best, k_model = get_best_kmeans(coordinates, k_max=10)
-    
-    # Reduce dimensionality
-    pca = PCA(2)  # 2D for plotting
-    reduced_coordinates = pca.fit_transform(coordinates)
+    scaled_coordinates = scale_coordinates(coordinates)
+    reduced_coordinates = reduce_dimensionality(coordinates)
+    k_max = min(k_max, len(scaled_coordinates))
 
-    # Cluster in the reduced dimension space
-    reduced_dim_k_model = KMeans(n_clusters=k_best, max_iter=1000)
-    reduced_dim_k_model.fit(reduced_coordinates)
-    labels = reduced_dim_k_model.predict(reduced_coordinates)
-    unique_labels = np.unique(k_model.labels_)
+    best_labels = None
+    best_score = 0
+    for k in trange(2, k_max+1, desc="Finding best number of clusters"):
+        k_model = KMeans(
+            n_clusters=k,
+            init="random",
+            n_init=25,  # Try initialising the model 25 times and get the best result
+            max_iter=500,
+            random_state=42
+        )
+        labels = k_model.fit_predict(scaled_coordinates)
+        score = silhouette_score(scaled_coordinates, labels, metric="euclidean")
+
+        if score > best_score:
+            best_labels = labels
+            best_score = score
+    
+    unique_labels = np.unique(best_labels)
+
+    return reduced_coordinates, best_labels, unique_labels
+
+
+def get_labels_using_dbscan(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+    """
+    Gets the labels for each of the coordinates using Density-Based Spatial Clustering of Applications with Noise (DBSCAN).
+    
+    :param coordinates: coordinates to label.
+    :return: the reduced coordinates for displaying.
+    :return: the labels for each of the reduced coordinates.
+    :return: the unique labels.
+    """
+    
+    scaled_coordinates = scale_coordinates(coordinates)
+    reduced_coordinates = reduce_dimensionality(coordinates)
+
+    dbscan = DBSCAN(
+        eps=20,
+        min_samples=5,
+        n_jobs=None  # Equivalent to 1 job, but can increase for parallel processing
+    )
+    labels = dbscan.fit_predict(scaled_coordinates)
+    unique_labels = np.unique(labels)
 
     return reduced_coordinates, labels, unique_labels
 
 
-# MAIN FUNCTIONS
-def get_labels(coordinates: np.ndarray[float], method: str = "kmeans") -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+def get_labels_using_optics(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
     """
-    Gets the labels for each of the coordinates.
+    Gets the labels for each of the coordinates using Ordering Points To Identify the Clustering Structure (OPTICS).
     
     :param coordinates: coordinates to label.
-    :param method: method to generate the labels. Valid methods are 'kmeans'.
     :return: the reduced coordinates for displaying.
     :return: the labels for each of the reduced coordinates.
     :return: the unique labels.
     """
 
+    scaled_coordinates = scale_coordinates(coordinates)
+    reduced_coordinates = reduce_dimensionality(coordinates)
+
+    optics = OPTICS(
+        min_samples=5,
+        xi=0.04,
+        # min_cluster_size=10,
+        n_jobs=None  # Equivalent to 1 job, but can increase for parallel processing
+    )
+    labels = optics.fit_predict(scaled_coordinates)
+    unique_labels = np.unique(labels)
+
+    return reduced_coordinates, labels, unique_labels
+
+
+def get_labels_using_gmm(coordinates: np.ndarray[float], max_clusters=10) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+    """
+    Gets the labels for each of the coordinates using a Gaussian Mixture Model (GMM).
+    
+    :param coordinates: coordinates to label.
+    :param max_clusters: maximum number of clusters to consider. Must be at least 2.
+    :return: the reduced coordinates for displaying.
+    :return: the labels for each of the reduced coordinates.
+    :return: the unique labels.
+    """
+    
+    scaled_coordinates = scale_coordinates(coordinates)
+    reduced_coordinates = reduce_dimensionality(coordinates)
+    max_clusters = min(max_clusters, len(scaled_coordinates))
+
+    best_labels = None
+    best_score = 0
+    for n in trange(2, max_clusters+1, desc="Finding best number of clusters"):
+        gmm = GaussianMixture(
+            n_components=n,
+            n_init=10,
+            max_iter=100,
+            random_state=42
+        )
+        labels = gmm.fit_predict(scaled_coordinates)
+        score = silhouette_score(scaled_coordinates, labels, metric="euclidean")
+
+        if score > best_score:
+            best_labels = labels
+            best_score = score
+    
+    unique_labels = np.unique(best_labels)
+
+    return reduced_coordinates, best_labels, unique_labels
+
+
+def get_labels(coordinates: np.ndarray[float], method: str = "kmeans") -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+    """
+    Gets the labels for each of the coordinates.
+    
+    :param coordinates: coordinates to label.
+    :param method: method to generate the labels. Valid methods are 'kmeans', 'dbscan', 'optics', and 'gmm'.
+    :return: the reduced coordinates for displaying.
+    :return: the labels for each of the reduced coordinates.
+    :return: the unique labels.
+    """
+    
+    valid_methods = {"kmeans", "dbscan", "optics", "gmm"}
+
     method = method.lower()
-    if method not in {"kmeans"}:
-        raise ValueError(f"Invalid method '{method}'")
+    if method not in valid_methods:
+        raise ValueError(f"Invalid method '{method}' for clustering")
 
     if method == "kmeans":
         return get_labels_using_kmeans(coordinates)
+    if method == "dbscan":
+        return get_labels_using_dbscan(coordinates)
+    if method == "optics":
+        return get_labels_using_optics(coordinates)
+    if method == "gmm":
+        return get_labels_using_gmm(coordinates)
