@@ -54,12 +54,13 @@ def reduce_dimensionality(coordinates: np.ndarray[float], ndim: int = 3, method:
 
 
 # MAIN FUNCTIONS
-def get_labels_using_kmeans(coordinates: np.ndarray[float], k_max: int = 10) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+def get_labels_using_kmeans(coordinates: np.ndarray[float], k_max: int = 10, num_clusters_override: int = -1) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
     """
     Gets the labels for each of the coordinates using K-means clustering.
     
     :param coordinates: coordinates to label.
     :param k_max: Maximum `k` value for use in the K-means model.
+    :param num_cluters_override: override value for the number of clusters to use. Applicable only for 'kmeans' and 'gmm'. If -1 then the number of clusters will be determined automatically.
     :return: the reduced coordinates for displaying.
     :return: the labels for each of the reduced coordinates.
     :return: the unique labels.
@@ -69,22 +70,32 @@ def get_labels_using_kmeans(coordinates: np.ndarray[float], k_max: int = 10) -> 
     reduced_coordinates = reduce_dimensionality(coordinates)
     k_max = min(k_max, len(scaled_coordinates))
 
-    best_labels = None
-    best_score = 0
-    for k in trange(2, k_max+1, desc="Finding best number of clusters"):
+    if num_clusters_override != -1:
         k_model = KMeans(
-            n_clusters=k,
+            n_clusters=num_clusters_override,
             init="random",
             n_init=25,  # Try initialising the model 25 times and get the best result
             max_iter=500,
             random_state=42
         )
-        labels = k_model.fit_predict(scaled_coordinates)
-        score = silhouette_score(scaled_coordinates, labels, metric="euclidean")
+        best_labels = k_model.fit_predict(scaled_coordinates)
+    else:
+        best_labels = None
+        best_score = 0
+        for k in trange(2, k_max+1, desc="Finding best number of clusters"):
+            k_model = KMeans(
+                n_clusters=k,
+                init="random",
+                n_init=25,  # Try initialising the model 25 times and get the best result
+                max_iter=500,
+                random_state=42
+            )
+            labels = k_model.fit_predict(scaled_coordinates)
+            score = silhouette_score(scaled_coordinates, labels, metric="euclidean")
 
-        if score > best_score:
-            best_labels = labels
-            best_score = score
+            if score > best_score:
+                best_labels = labels
+                best_score = score
     
     unique_labels = np.unique(best_labels)
 
@@ -140,12 +151,13 @@ def get_labels_using_optics(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[
     return reduced_coordinates, labels, unique_labels
 
 
-def get_labels_using_gmm(coordinates: np.ndarray[float], max_clusters=10) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+def get_labels_using_gmm(coordinates: np.ndarray[float], max_clusters=10, num_clusters_override: int = -1) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
     """
     Gets the labels for each of the coordinates using a Gaussian Mixture Model (GMM).
     
     :param coordinates: coordinates to label.
     :param max_clusters: maximum number of clusters to consider. Must be at least 2.
+    :param num_cluters_override: override value for the number of clusters to use. Applicable only for 'kmeans' and 'gmm'. If -1 then the number of clusters will be determined automatically.
     :return: the reduced coordinates for displaying.
     :return: the labels for each of the reduced coordinates.
     :return: the unique labels.
@@ -155,34 +167,44 @@ def get_labels_using_gmm(coordinates: np.ndarray[float], max_clusters=10) -> Tup
     reduced_coordinates = reduce_dimensionality(coordinates)
     max_clusters = min(max_clusters, len(scaled_coordinates))
 
-    best_labels = None
-    best_score = 0
-    for n in trange(2, max_clusters+1, desc="Finding best number of clusters"):
+    if num_clusters_override != -1:
         gmm = GaussianMixture(
-            n_components=n,
+            n_components=num_clusters_override,
             init_params="kmeans",
-            n_init=10,
             max_iter=100,
             random_state=42
         )
-        labels = gmm.fit_predict(scaled_coordinates)
-        score = silhouette_score(scaled_coordinates, labels, metric="euclidean")
+        best_labels = gmm.fit_predict(scaled_coordinates)
+    else:
+        best_labels = None
+        best_score = 0
+        for n in trange(2, max_clusters+1, desc="Finding best number of clusters"):
+            gmm = GaussianMixture(
+                n_components=n,
+                init_params="kmeans",
+                n_init=10,
+                max_iter=100,
+                random_state=42
+            )
+            labels = gmm.fit_predict(scaled_coordinates)
+            score = silhouette_score(scaled_coordinates, labels, metric="euclidean")
 
-        if score > best_score:
-            best_labels = labels
-            best_score = score
+            if score > best_score:
+                best_labels = labels
+                best_score = score
     
     unique_labels = np.unique(best_labels)
 
     return reduced_coordinates, best_labels, unique_labels
 
 
-def get_labels(coordinates: np.ndarray[float], method: str = "kmeans") -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
+def get_labels(coordinates: np.ndarray[float], method: str = "kmeans", num_cluters_override: int = -1) -> Tuple[np.ndarray[float], np.ndarray[float], np.ndarray[float]]:
     """
     Gets the labels for each of the coordinates.
     
     :param coordinates: coordinates to label.
     :param method: method to generate the labels. Valid methods are 'kmeans', 'dbscan', 'optics', and 'gmm'.
+    :param num_cluters_override: override value for the number of clusters to use. Applicable only for 'kmeans' and 'gmm'. If -1 then the number of clusters will be determined automatically.
     :return: the reduced coordinates for displaying.
     :return: the labels for each of the reduced coordinates.
     :return: the unique labels.
@@ -195,10 +217,10 @@ def get_labels(coordinates: np.ndarray[float], method: str = "kmeans") -> Tuple[
         raise ValueError(f"Invalid method '{method}' for clustering")
 
     if method == "kmeans":
-        return get_labels_using_kmeans(coordinates)
+        return get_labels_using_kmeans(coordinates, num_clusters_override=num_cluters_override)
     if method == "dbscan":
         return get_labels_using_dbscan(coordinates)
     if method == "optics":
         return get_labels_using_optics(coordinates)
     if method == "gmm":
-        return get_labels_using_gmm(coordinates)
+        return get_labels_using_gmm(coordinates, num_clusters_override=num_cluters_override)

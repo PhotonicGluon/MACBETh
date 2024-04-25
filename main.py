@@ -48,7 +48,7 @@ def main():
     coordinates = np.array([unigram_list_to_coordinates(unigram_list, top_unigrams) for unigram_list in unigram_lists])
 
     # Get the labels
-    reduced_coordinates, labels, unique_labels = get_labels(coordinates, method="optics")
+    reduced_coordinates, labels, unique_labels = get_labels(coordinates, method="gmm", num_cluters_override=7)
 
     # Plot the coordinates
     for unique_label in unique_labels:
