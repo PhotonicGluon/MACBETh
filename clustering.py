@@ -2,16 +2,16 @@
 from typing import Tuple
 
 import numpy as np
-from kneed import KneeLocator
 from sklearn.cluster import KMeans, DBSCAN, OPTICS
 from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE, MDS, Isomap
 from sklearn.metrics import silhouette_score
 from sklearn.mixture import GaussianMixture
 from sklearn.preprocessing import StandardScaler
 from tqdm import trange
 
 # CONSTANTS
-DIMENSIONALITY_REDUCTION_METHOD = "pca"
+DIMENSIONALITY_REDUCTION_METHOD = "tsne"
 
 
 # HELPER FUNCTIONS
@@ -27,26 +27,30 @@ def scale_coordinates(coordinates: np.ndarray[float]) -> np.ndarray[float]:
     return scaler.fit_transform(coordinates)
 
 
-def reduce_dimensionality(coordinates: np.ndarray[float], ndim: int = 3, method: str = "pca") -> np.ndarray[float]:
+def reduce_dimensionality(coordinates: np.ndarray[float], ndim: int = 3, method: str = DIMENSIONALITY_REDUCTION_METHOD) -> np.ndarray[float]:
     """
     Reduces the dimensionality of the coordinates.
 
     :param coordinates: coordinates to scale.
     :param ndim: number of dimensions for the resulting coordinates.
-    :param method: method for dimensionality reduction. Valid methods are 'pca'.
+    :param method: method for dimensionality reduction. Valid methods are 'pca', 'tsne', 'mds', and 'isomap'.
     :returns: reduced coordinates.
     """
 
-    valid_methods = {"pca"}
+    valid_methods = {"pca", "tsne", "mds", "isomap"}
 
     method = method.lower()
     if method not in valid_methods:
         raise ValueError(f"Invalid method '{method}' for dimensionality reduction")
     
     if method == "pca":
-        dimensionality_reducer = PCA(ndim)
-    
-    return dimensionality_reducer.fit_transform(coordinates) 
+        return PCA(n_components=ndim).fit_transform(coordinates)
+    if method == "tsne":
+        return TSNE(n_components=ndim).fit_transform(coordinates)
+    if method == "mds":
+        return MDS(n_components=ndim).fit_transform(coordinates)
+    if method == "isomap":
+        return Isomap(n_components=ndim).fit_transform(coordinates)
 
 
 # MAIN FUNCTIONS
@@ -125,9 +129,9 @@ def get_labels_using_optics(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[
     reduced_coordinates = reduce_dimensionality(coordinates)
 
     optics = OPTICS(
-        min_samples=5,
-        xi=0.04,
-        # min_cluster_size=10,
+        min_samples=10,
+        xi=0.0125,
+        min_cluster_size=25,
         n_jobs=None  # Equivalent to 1 job, but can increase for parallel processing
     )
     labels = optics.fit_predict(scaled_coordinates)
@@ -156,6 +160,7 @@ def get_labels_using_gmm(coordinates: np.ndarray[float], max_clusters=10) -> Tup
     for n in trange(2, max_clusters+1, desc="Finding best number of clusters"):
         gmm = GaussianMixture(
             n_components=n,
+            init_params="kmeans",
             n_init=10,
             max_iter=100,
             random_state=42
