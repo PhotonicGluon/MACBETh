@@ -15,7 +15,7 @@ DIMENSIONALITY_REDUCTION_METHOD = "tsne"
 
 
 # HELPER FUNCTIONS
-def scale_coordinates(coordinates: np.ndarray[float]) -> np.ndarray[float]:
+def _scale_coordinates(coordinates: np.ndarray[float]) -> np.ndarray[float]:
     """
     Scales the coordinates.
 
@@ -27,7 +27,7 @@ def scale_coordinates(coordinates: np.ndarray[float]) -> np.ndarray[float]:
     return scaler.fit_transform(coordinates)
 
 
-def reduce_dimensionality(coordinates: np.ndarray[float], ndim: int = 3, method: str = DIMENSIONALITY_REDUCTION_METHOD) -> np.ndarray[float]:
+def _reduce_dimensionality(coordinates: np.ndarray[float], ndim: int = 3, method: str = DIMENSIONALITY_REDUCTION_METHOD) -> np.ndarray[float]:
     """
     Reduces the dimensionality of the coordinates.
 
@@ -66,8 +66,8 @@ def get_labels_using_kmeans(coordinates: np.ndarray[float], k_max: int = 10, num
     :return: the unique labels.
     """
         
-    scaled_coordinates = scale_coordinates(coordinates)
-    reduced_coordinates = reduce_dimensionality(coordinates)
+    scaled_coordinates = _scale_coordinates(coordinates)
+    reduced_coordinates = _reduce_dimensionality(coordinates)
     k_max = min(k_max, len(scaled_coordinates))
 
     if num_clusters_override != -1:
@@ -112,8 +112,8 @@ def get_labels_using_dbscan(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[
     :return: the unique labels.
     """
     
-    scaled_coordinates = scale_coordinates(coordinates)
-    reduced_coordinates = reduce_dimensionality(coordinates)
+    scaled_coordinates = _scale_coordinates(coordinates)
+    reduced_coordinates = _reduce_dimensionality(coordinates)
 
     dbscan = DBSCAN(
         eps=20,
@@ -136,8 +136,8 @@ def get_labels_using_optics(coordinates: np.ndarray[float]) -> Tuple[np.ndarray[
     :return: the unique labels.
     """
 
-    scaled_coordinates = scale_coordinates(coordinates)
-    reduced_coordinates = reduce_dimensionality(coordinates)
+    scaled_coordinates = _scale_coordinates(coordinates)
+    reduced_coordinates = _reduce_dimensionality(coordinates)
 
     optics = OPTICS(
         min_samples=10,
@@ -163,8 +163,8 @@ def get_labels_using_gmm(coordinates: np.ndarray[float], max_clusters=10, num_cl
     :return: the unique labels.
     """
     
-    scaled_coordinates = scale_coordinates(coordinates)
-    reduced_coordinates = reduce_dimensionality(coordinates)
+    scaled_coordinates = _scale_coordinates(coordinates)
+    reduced_coordinates = _reduce_dimensionality(coordinates)
     max_clusters = min(max_clusters, len(scaled_coordinates))
 
     if num_clusters_override != -1:
@@ -224,3 +224,41 @@ def get_labels(coordinates: np.ndarray[float], method: str = "kmeans", num_clute
         return get_labels_using_optics(coordinates)
     if method == "gmm":
         return get_labels_using_gmm(coordinates, num_clusters_override=num_cluters_override)
+
+
+# MAIN CODE
+if __name__ == "__main__":
+    from collections import defaultdict
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import seaborn as sns
+
+    from clustering import get_labels
+    from misc import load_data
+    from preprocessing import get_unigrams_from_report, get_top_unigrams, unigram_list_to_coordinates
+
+    sns.set_theme()
+
+    data = load_data()
+
+    # Process the data as coordinates
+    unigram_counts = defaultdict(int)
+    unigram_lists = []
+    for report in data:
+        unigrams = get_unigrams_from_report(report)
+        unigram_lists.append(unigrams)
+        for unigram in unigrams:
+            unigram_counts[unigram] += 1
+
+    top_unigrams = get_top_unigrams(unigram_counts, num=1000, seed=42)
+    coordinates = np.array([unigram_list_to_coordinates(unigram_list, top_unigrams) for unigram_list in unigram_lists])
+
+    # Get the labels
+    reduced_coordinates, labels, unique_labels = get_labels(coordinates, method="gmm", num_cluters_override=7)
+
+    # Plot the coordinates
+    for unique_label in unique_labels:
+        plt.scatter(reduced_coordinates[labels == unique_label, 0], reduced_coordinates[labels == unique_label, 1], label=unique_label)
+    plt.legend()
+    plt.show()
