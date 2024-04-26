@@ -56,9 +56,14 @@ def get_top_unigrams(unigram_counts: Dict[str, int], num=1000, seed=-1) -> List[
     """
 
     unigrams = [(key, val) for key, val in unigram_counts.items()]
+
+    # To fix issues with reproducibility, we first sort by the unigram and then by the count
+    unigrams.sort(reverse=True, key=lambda elem: elem[0])  # Sort based on unigram
     unigrams.sort(reverse=True, key=lambda elem: elem[1])  # Sort based on count
+
     unigrams = unigrams[:num]
     top_unigrams = [unigram for unigram, _ in unigrams]
+    top_unigrams = top_unigrams.copy()
 
     if seed != -1:
         r = random.Random(seed)
