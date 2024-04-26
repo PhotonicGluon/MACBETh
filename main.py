@@ -35,33 +35,20 @@ def clustering(cluster_method: str, dim_reduction_method: str, num_cluters_overr
     :param num_clusters_override: override value for the number of clusters to use. Applicable only for 'kmeans' and 'gmm'. If -1 then the number of clusters will be determined automatically.
     """
 
-    from collections import defaultdict
-
     import matplotlib.pyplot as plt
-    import numpy as np
     import seaborn as sns
 
     from clustering import get_labels
-    from misc import load_data, get_unigrams_from_report, get_top_unigrams, unigram_list_to_coordinates
+    from misc import load_data, reports_to_coordinates
 
     sns.set_theme()
-    data = load_data()
 
+    data, _ = load_data()
     if len(data) == 0:
         print("No data found in data folder")
         return
 
-    # Process the data as coordinates
-    unigram_counts = defaultdict(int)
-    unigram_lists = []
-    for report in data:
-        unigrams = get_unigrams_from_report(report)
-        unigram_lists.append(unigrams)
-        for unigram in unigrams:
-            unigram_counts[unigram] += 1
-
-    top_unigrams = get_top_unigrams(unigram_counts, num=1000, seed=42)
-    coordinates = np.array([unigram_list_to_coordinates(unigram_list, top_unigrams) for unigram_list in unigram_lists])
+    coordinates, _ = reports_to_coordinates(data, num_unigrams=1000, seed=42)
 
     # Get the labels
     reduced_coordinates, labels, unique_labels = get_labels(coordinates, dim_reduction_method=dim_reduction_method, cluster_method=cluster_method, num_cluters_override=num_cluters_override)

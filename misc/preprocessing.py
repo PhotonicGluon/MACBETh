@@ -1,8 +1,12 @@
 # IMPORTS
+from collections import defaultdict
 import json
 import re
 import random
-from typing import List, Dict
+from typing import List, Dict, Tuple
+
+import numpy as np
+from tqdm import tqdm
 
 
 # FUNCTIONS
@@ -66,8 +70,7 @@ def get_top_unigrams(unigram_counts: Dict[str, int], num=1000, seed=-1) -> List[
     top_unigrams = top_unigrams.copy()
 
     if seed != -1:
-        r = random.Random(seed)
-        r.shuffle(top_unigrams)
+        random.Random(seed).shuffle(top_unigrams)
     
     return top_unigrams
 
@@ -87,3 +90,28 @@ def unigram_list_to_coordinates(unigram_list: List[str], top_unigrams: List[str]
     unigram_set = set(unigram_list)  # For faster lookup
     coordinates = [int(top_unigram in unigram_set) for top_unigram in top_unigrams]
     return coordinates
+
+
+def reports_to_coordinates(data: List[dict], num_unigrams=1000, seed=-1) -> Tuple[np.ndarray, List[str]]:
+    """
+    Converts all the reports into coordinates.
+
+    :param data: data array containing the reports.
+    :param num_unigrams: number of unigrams to include in the coordinates.
+    :param seed: the seed for randomising the output list. If `-1` then no randomisation will be performed.
+    :return: an array of coordinates. The size of the array will be `(len(data), num_unigrams)`.
+    :return: the list of the top `num_unigrams` unigrams, in the same order as the array of coordinates,
+    """
+
+    unigram_counts = defaultdict(int)
+    unigram_lists = []
+    for report in tqdm(data, desc="Converting reports to coordinates"):
+        unigrams = get_unigrams_from_report(report)
+        unigram_lists.append(unigrams)
+        for unigram in unigrams:
+            unigram_counts[unigram] += 1
+
+    top_unigrams = get_top_unigrams(unigram_counts, num=num_unigrams, seed=seed)
+    coordinates = np.array([unigram_list_to_coordinates(unigram_list, top_unigrams) for unigram_list in unigram_lists])
+
+    return coordinates, top_unigrams
