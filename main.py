@@ -1,6 +1,9 @@
 # IMPORTS
+import os
 from argparse import ArgumentParser, ArgumentTypeError
 from typing import Any
+
+import json
 
 from clustering import VALID_CLUSTERING_METHODS, VALID_DIMENSIONALITY_REDUCING_METHODS
 
@@ -25,6 +28,27 @@ def number_of_clusters(n: Any) -> int:
         return n
 
     raise ArgumentTypeError("number of clusters must be -1 or a postive integer")
+
+
+def report_file(path: Any) -> str:
+    """
+    Checks and validates the value passed for the report file.
+
+    :param path: supposed path to the file
+    :return: 
+    """
+    
+    if not os.path.isfile(path):
+        raise ArgumentTypeError("no file found at specified path")
+    try:
+        with open(path, "r") as f:
+            data = json.load(f)
+            if "additional_info" not in data:
+                raise ArgumentTypeError("JSON file must have the 'additional_info' field")
+    except json.JSONDecodeError:
+        raise ArgumentTypeError("file at specified path does not appear to be a JSON file")
+    
+    return path
 
 
 # MAIN FUNCTIONS
@@ -72,6 +96,58 @@ def clustering(cluster_method: str, dim_reduction_method: str, num_cluters_overr
     plt.show()
 
 
+def classifier(path: str):
+    """
+    Performs classification.
+
+    :param file: path to the VirusTotal report to classify
+    """
+    
+    import pickle
+    
+    import numpy as np
+    import keras
+    
+    from misc import get_unigrams_from_report, unigram_list_to_coordinates
+    
+    with open(path, "r") as f:
+        report = json.load(f)
+
+    # Convert the report into data to feed into the model
+    try:
+        with open("data/top_unigrams.txt", "r") as f:
+            top_unigrams = [x.strip() for x in f.readlines()]
+    except FileNotFoundError:
+        print("The 'top_unigrams.txt' file cannot be found in the 'data' directory.")
+        exit(1)
+    
+    unigrams = get_unigrams_from_report(report)
+    coordinates = unigram_list_to_coordinates(unigrams, top_unigrams)
+    
+    # Load the model
+    model_path = "models/combined/combined.keras"
+    if not os.path.isfile(model_path):
+        print("The 'combined.keras' file cannot be found in the 'models/combined' directory.")
+        exit(1)
+    
+    model = keras.models.load_model(model_path)
+    
+    # Make a prediction based off the data
+    prediction = np.argmax(model.predict(np.array([coordinates]))[0])
+    print(prediction)
+    
+    # Convert this index back into a label using the label encoder
+    try:
+        with open("models/classifier/label-encoder.pkl", "rb") as f:
+            label_encoder = pickle.load(f)
+    except FileNotFoundError:
+        print("The 'label-encoder.pkl' file cannot be found in the 'models/classifier' directory.")
+        exit(1)
+    
+    pred_label = label_encoder.inverse_transform([prediction])[0]
+    print(f"Predicted label for '{path}' is {pred_label}")
+
+
 # PARSERS
 parser = ArgumentParser(description="MACBETH: Malware Analysis and Classification Based on Entries in Threat Hunting")
 subparsers = parser.add_subparsers(help="perform clustering or classification", dest="command", required=True)
@@ -102,7 +178,12 @@ parser_clustering.add_argument(
     type=number_of_clusters,
 )
 
+parser_classifier = subparsers.add_parser("classify", help="classifier submenu")
+parser_classifier.add_argument("file", help="report file to classify", type=report_file)
+
 args = parser.parse_args()
 
 if args.command == "cluster":
     clustering(args.cluster_method, args.reduction_method, args.number_of_clusters)
+else:
+    classifier(args.file)
