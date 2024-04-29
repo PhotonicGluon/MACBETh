@@ -11,9 +11,9 @@ def load_data(data_folder: str = "data/json") -> Tuple[List[dict], List[str]]:
     """
     Loads all the JSON files from the data folder.
 
-    :param data_folder: folder that contains the JSON files.
-    :return: a list of the JSON data.
-    :return: a list of the file paths of the JSON files that the files come from.
+    :param data_folder: folder that contains the JSON files, defaults to "data/json"
+    :return: a list of the JSON data
+    :return: a list of the file paths of the JSON files that the files come from
     """
 
     all_json_files = list(glob.glob(f"{data_folder}/*.json"))

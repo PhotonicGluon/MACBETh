@@ -47,7 +47,7 @@ while failure_count < CONSECUTIVE_FAILURE_COUNT:
                 pretty_sleep(FAILURE_SLEEP_DURATION, dot_length=10, interval=0.1)
 
             continue
-            
+
         failure_count = 0
 
         if report is None:

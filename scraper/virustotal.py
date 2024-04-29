@@ -4,19 +4,22 @@ import time
 import requests
 import json
 import urllib3
+from typing import Set, Tuple, Optional
 
 # SETUP
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 # FUNCTIONS
-def update_master_list(all_hashes):
+def update_master_list(all_hashes: Set[str]):
     """
-    Updates the master list of hashses.
+    Updates the master list of hashes.
+
+    :param all_hashes: set of strings, representing the master list of hashes
     """
 
     all_hashes = sorted(list(all_hashes))
-    
+
     with open("../data/hashes.txt", "w") as f:
         for hash_ in all_hashes:
             f.write(f"{hash_}\n")
@@ -26,6 +29,7 @@ def update_done_hashes():
     """
     Updates the list of processed hashes.
     """
+
     # Get all the JSON data from the files we downloaded
     data_files = os.listdir("../data/vt-data")
     all_json_data = []
@@ -46,12 +50,16 @@ def update_done_hashes():
             f.write(f"{hash_}\n")
 
 
-
-def get_report(resource_hash, api_key, retry=5, delay=1):
+def get_report(resource_hash: str, api_key: str, retry: int = 5, delay: float = 1.0) -> Tuple[bool, Optional[dict]]:
     """
     Tries to get the VirusTotal report.
-    Returns a tuple. The first value is a boolean on whether the request was successful or not. The second value is the
-    report. May be `None`.
+
+    :param resource_hash: hash of the resource to obtain
+    :param api_key: VirusTotal API key
+    :param retry: number of times to retry obtaining the resource report, defaults to 5
+    :param delay: delay between each try, defaults to 1
+    :return: whether the request was successful or not
+    :return: the report
     """
     count = 1
     while count <= retry:
@@ -63,7 +71,7 @@ def get_report(resource_hash, api_key, retry=5, delay=1):
         except requests.exceptions.SSLError:
             r = requests.get(
                 f"https://www.virustotal.com/vtapi/v2/file/report?apikey={api_key}&resource={resource_hash}&allinfo=1",
-                verify=False
+                verify=False,
             )
 
         if r.status_code != 200:
@@ -75,7 +83,7 @@ def get_report(resource_hash, api_key, retry=5, delay=1):
 
     if r.status_code != 200:
         return False, None
-    
+
     data = json.loads(r.text)
     if data["response_code"] != 1:
         return True, None
