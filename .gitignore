@@ -152,7 +152,10 @@ cython_debug/
 #.idea/
 
 # Others
+api_key.txt
+
 data
+!data/hashes.txt
 !data/README.md
 
 checkpoints
