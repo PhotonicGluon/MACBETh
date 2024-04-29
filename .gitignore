@@ -154,3 +154,5 @@ cython_debug/
 # Others
 data
 !data/README.md
+
+checkpoints

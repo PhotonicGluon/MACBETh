@@ -23,7 +23,7 @@ with open("data/dataset.csv", "w") as f:
 
     f.write("label,hash,")
     for i in range(num_elem_in_coordinates):
-        f.write(f"dim-{i:03d}")
+        f.write(f"dim-{i:04d}")
         if i != num_elem_in_coordinates - 1:
             f.write(",")
         else:
