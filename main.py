@@ -1,5 +1,5 @@
 # IMPORTS
-from argparse import ArgumentParser
+from argparse import ArgumentParser, ArgumentTypeError
 from typing import Any
 
 from clustering import VALID_CLUSTERING_METHODS, VALID_DIMENSIONALITY_REDUCING_METHODS
@@ -11,20 +11,20 @@ def number_of_clusters(n: Any) -> int:
     Checks and validates the value passed for the number of clusters.
 
     :param n: value provided.
-    :raises ValueError: if the value is not an integer
-    :raises ValueError: if the value is neither -1 nor greater than 0
+    :raises ArgumentTypeError: if the value is not an integer
+    :raises ArgumentTypeError: if the value is neither -1 nor greater than 0
     :return: the same value if it is valid
     """
 
     try:
         n = int(n)
     except ValueError:
-        raise ValueError
+        raise ArgumentTypeError("number of clusters is not an integer")
 
     if n == -1 or n > 0:
         return n
 
-    raise ValueError
+    raise ArgumentTypeError("number of clusters must be -1 or a postive integer")
 
 
 # MAIN FUNCTIONS
