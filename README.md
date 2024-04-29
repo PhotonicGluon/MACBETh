@@ -1,6 +1,6 @@
 # MACBETh - Malware Analysis and Classification Based on Elements in Threats
 
-Analyses malware based on its attributes, and helps classifify malware based on reports generated in VirusTotal.
+Analyses malware based on its attributes, and helps classify malware based on reports generated in VirusTotal.
 
 ## Features
 
@@ -9,15 +9,15 @@ MACBETh has two main parts, [clustering](#clustering) and [classification](#clas
 ### Clustering
 
 ![tsne-clustering-with-10-clusters](img/clustering.png)
-MACBETh can perform unsupervised clustering of malware samples. By default it uses Principal Component Analysis (PCA) to reduce the dimensionality of the data and the K-means algorithm to generate the clusters, but other algorithms are available in the [CLI](#installation-and-usage).
+MACBETh can perform unsupervised clustering of malware samples. By default, it uses Principal Component Analysis (PCA) to reduce the dimensionality of the data and the K-means algorithm to generate the clusters, but other algorithms are available in the [CLI](#installation-and-usage).
 
 ### Classification
 
-MACBETh also allows for classification of malware samples. Simply provide it a VirusTotal report and it will predict what malware family it belongs to.
+MACBETh also allows for the classification of malware samples. Simply provide it with a VirusTotal report and it will predict what malware family it belongs to.
 
 ## Installation and Usage
 
-To install MACBETh simply download this repository, create a new virtual environment, and install the required dependencies using
+To install MACBETh, simply download this repository, create a new virtual environment, and install the required dependencies using
 
 ```bash
 pip install -r requirements.txt
