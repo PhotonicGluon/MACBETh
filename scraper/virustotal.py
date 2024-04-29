@@ -15,6 +15,8 @@ def update_master_list(all_hashes):
     Updates the master list of hashses.
     """
 
+    all_hashes = sorted(list(all_hashes))
+    
     with open("../data/hashes.txt", "w") as f:
         for hash_ in all_hashes:
             f.write(f"{hash_}\n")
