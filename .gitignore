@@ -158,6 +158,6 @@ data
 !data/hashes.txt
 !data/README.md
 
-checkpoints
+checkpoint*
 
 temp.json
