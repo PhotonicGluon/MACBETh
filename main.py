@@ -35,9 +35,13 @@ def report_file(path: Any) -> str:
     Checks and validates the value passed for the report file.
 
     :param path: supposed path to the file
-    :return: 
+    :raises ArgumentTypeError: if no file was found at the specified path
+    :raises ArgumentTypeError: if the file at the specified path does not appear to be a JSON file
+    :raises ArgumentTypeError: if the JSON file at the specified path does not have the
+    `additional_info` field
+    :return: the same valid if it is valid
     """
-    
+
     if not os.path.isfile(path):
         raise ArgumentTypeError("no file found at specified path")
     try:
@@ -47,7 +51,7 @@ def report_file(path: Any) -> str:
                 raise ArgumentTypeError("JSON file must have the 'additional_info' field")
     except json.JSONDecodeError:
         raise ArgumentTypeError("file at specified path does not appear to be a JSON file")
-    
+
     return path
 
 
@@ -102,14 +106,14 @@ def classifier(path: str):
 
     :param file: path to the VirusTotal report to classify
     """
-    
+
     import pickle
-    
+
     import numpy as np
     import keras
-    
+
     from misc import get_unigrams_from_report, unigram_list_to_coordinates
-    
+
     with open(path, "r") as f:
         report = json.load(f)
 
@@ -120,22 +124,22 @@ def classifier(path: str):
     except FileNotFoundError:
         print("The 'top_unigrams.txt' file cannot be found in the 'data' directory.")
         exit(1)
-    
+
     unigrams = get_unigrams_from_report(report)
     coordinates = unigram_list_to_coordinates(unigrams, top_unigrams)
-    
+
     # Load the model
     model_path = "models/combined/combined.keras"
     if not os.path.isfile(model_path):
         print("The 'combined.keras' file cannot be found in the 'models/combined' directory.")
         exit(1)
-    
+
     model = keras.models.load_model(model_path)
-    
+
     # Make a prediction based off the data
     prediction = np.argmax(model.predict(np.array([coordinates]))[0])
     print(prediction)
-    
+
     # Convert this index back into a label using the label encoder
     try:
         with open("models/classifier/label-encoder.pkl", "rb") as f:
@@ -143,9 +147,9 @@ def classifier(path: str):
     except FileNotFoundError:
         print("The 'label-encoder.pkl' file cannot be found in the 'models/classifier' directory.")
         exit(1)
-    
+
     pred_label = label_encoder.inverse_transform([prediction])[0]
-    print(f"Predicted label for '{path}' is {pred_label}")
+    print(f"\nPredicted label for '{path}' is {pred_label}\n")
 
 
 # PARSERS

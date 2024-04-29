@@ -1,0 +1,605 @@
+{
+    "ITW_urls": [],
+    "additional_info": {
+        "autostart": [
+            {
+                "entry": "HKLM\\System\\CurrentControlSet\\Services\\ebdrv",
+                "location": "HKLM\\System\\CurrentControlSet\\Services"
+            },
+            {
+                "entry": "HKLM\\System\\CurrentControlSet\\Services\\Dfsc",
+                "location": "HKLM\\System\\CurrentControlSet\\Services"
+            },
+            {
+                "entry": "%windir%\\system32\\eduprintprov.exe",
+                "location": "Task Scheduler"
+            },
+            {
+                "entry": "HKLM\\System\\CurrentControlSet\\Services\\tdx",
+                "location": "HKLM\\System\\CurrentControlSet\\Services"
+            },
+            {
+                "entry": "HKLM\\System\\CurrentControlSet\\Services\\PhoneSvc",
+                "location": "HKLM\\System\\CurrentControlSet\\Services"
+            },
+            {
+                "entry": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\NetworkProvider\\Order\\ProviderOrder",
+                "location": "HKLM\\SYSTEM\\CurrentControlSet\\Control\\NetworkProvider\\Order"
+            },
+            {
+                "entry": "HKLM\\Software\\Classes\\*\\ShellEx\\PropertySheetHandlers\\{1f2e5c40-9550-11ce-99d2-00aa006e086c}",
+                "location": "HKLM\\Software\\Classes\\*\\ShellEx\\PropertySheetHandlers"
+            },
+            {
+                "entry": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\Credential Providers\\{01A30791-40AE-4653-AB2E-FD210019AE88}",
+                "location": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\Credential Providers"
+            }
+        ],
+        "exiftool": {
+            "CodeSize": "67584",
+            "EntryPoint": "0x11579",
+            "FileType": "Win32 EXE",
+            "FileTypeExtension": "exe",
+            "ImageFileCharacteristics": "Executable, 32-bit",
+            "ImageVersion": "0.0",
+            "InitializedDataSize": "13312",
+            "LinkerVersion": "14.12",
+            "MIMEType": "application/octet-stream",
+            "MachineType": "Intel 386 or later, and compatibles",
+            "OSVersion": "5.1",
+            "PEType": "PE32",
+            "Subsystem": "Windows GUI",
+            "SubsystemVersion": "5.1",
+            "TimeStamp": "2021:08:16 07:13:07+00:00",
+            "UninitializedDataSize": "0"
+        },
+        "first_seen_itw": "2022-09-17 19:15:42",
+        "imports": {
+            "KERNEL32.dll": [
+                "GetProcAddress",
+                "GetModuleHandleA",
+                "FormatMessageW",
+                "GetCommandLineW",
+                "GetLocaleInfoW"
+            ],
+            "USER32.dll": [
+                "EndDialog",
+                "CreateMenu",
+                "CreateWindowExW",
+                "DefWindowProcW",
+                "GetMessageW"
+            ],
+            "gdi32.dll": [
+                "SelectPalette",
+                "GetTextMetricsW",
+                "TextOutW",
+                "SelectObject",
+                "CreateDIBitmap",
+                "SetPixel",
+                "GetTextColor",
+                "BitBlt",
+                "CreateFontW"
+            ]
+        },
+        "magic": "PE32 executable for MS Windows (GUI) Intel 80386 32-bit",
+        "pe-debug": [
+            {
+                "offset": 68732,
+                "size": 228,
+                "timestamp": "Mon Aug 16 07:13:07 2021",
+                "type": 13,
+                "type_str": "IMAGE_DEBUG_TYPE_POGO"
+            }
+        ],
+        "pe-entry-point": 71033,
+        "pe-imphash": "2e4ae81fc349a1616df79a6f5499743f",
+        "pe-machine-type": 332,
+        "pe-timestamp": 1629097987,
+        "positives_delta": 2,
+        "sections": [
+            [
+                ".text",
+                4096,
+                67238,
+                67584,
+                6.79,
+                "100da8cf342d6d8f3bd24b367e0ea999"
+            ],
+            [
+                ".rdata",
+                73728,
+                856,
+                1024,
+                4.09,
+                "a600a14bc810ec8233360027e0d75b12"
+            ],
+            [
+                ".data",
+                77824,
+                8504,
+                4096,
+                7.57,
+                "5b347d561dec359c573015424a6e2143"
+            ],
+            [
+                ".rsrc",
+                90112,
+                2959,
+                3072,
+                7.85,
+                "d5540d227f8c4b799fae9761218b728e"
+            ],
+            [
+                ".reloc",
+                94208,
+                3048,
+                3072,
+                6.68,
+                "03a6722abc865b86e1f93513688857ff"
+            ]
+        ],
+        "sigcheck": {
+            "authentihash": "463954dae62c1d5f0e85a50de7fd3602ee070c432b0fb53bd87497f84a626824",
+            "link date": "07:13 AM 08/16/2021"
+        },
+        "trid": "Win32 Dynamic Link Library (generic) (27.1%)\nWin16 NE executable (generic) (20.7%)\nWin32 Executable (generic) (18.5%)\nWin16/32 Executable Delphi generic (8.5%)\nOS/2 Executable (generic) (8.3%)"
+    },
+    "authentihash": "463954dae62c1d5f0e85a50de7fd3602ee070c432b0fb53bd87497f84a626824",
+    "community_reputation": -2,
+    "first_seen": "2021-11-05 19:17:52",
+    "harmless_votes": 0,
+    "last_seen": "2021-11-05 19:17:52",
+    "malicious_votes": 2,
+    "md5": "cb1e9e0b57107c1f5cd3569bf268de4f",
+    "permalink": "https://www.virustotal.com/gui/file/496cd9b6b6b96d6e781ab011d1d02ac3fc3532c8bdd07cae5d43286da6e4838d/detection/f-496cd9b6b6b96d6e781ab011d1d02ac3fc3532c8bdd07cae5d43286da6e4838d-1636650436",
+    "positives": 51,
+    "resource": "496cd9b6b6b96d6e781ab011d1d02ac3fc3532c8bdd07cae5d43286da6e4838d",
+    "response_code": 1,
+    "scan_date": "2021-11-11 17:07:16",
+    "scan_id": "496cd9b6b6b96d6e781ab011d1d02ac3fc3532c8bdd07cae5d43286da6e4838d-1636650436",
+    "scans": {
+        "ALYac": {
+            "detected": true,
+            "result": "Trojan.Ransom.BlackMatter",
+            "update": "20211111",
+            "version": "1.1.3.1"
+        },
+        "APEX": {
+            "detected": true,
+            "result": "Malicious",
+            "update": "20211110",
+            "version": "6.228"
+        },
+        "AVG": {
+            "detected": true,
+            "result": "Win32:BlackMatter-C [Ransom]",
+            "update": "20211111",
+            "version": "21.1.5827.0"
+        },
+        "Acronis": {
+            "detected": false,
+            "result": null,
+            "update": "20210512",
+            "version": "1.1.1.82"
+        },
+        "Ad-Aware": {
+            "detected": true,
+            "result": "DeepScan:Generic.Ransom.BlackMatter.A.44DF6F1B",
+            "update": "20211111",
+            "version": "3.0.21.193"
+        },
+        "AhnLab-V3": {
+            "detected": true,
+            "result": "Ransomware/Win.BlackMatter.C4575089",
+            "update": "20211111",
+            "version": "3.21.1.10219"
+        },
+        "Alibaba": {
+            "detected": false,
+            "result": null,
+            "update": "20190527",
+            "version": "0.3.0.5"
+        },
+        "Antiy-AVL": {
+            "detected": true,
+            "result": "Trojan/Generic.ASMalwS.3477A08",
+            "update": "20211111",
+            "version": "3.0.0.1"
+        },
+        "Arcabit": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "1.0.0.888"
+        },
+        "Avast": {
+            "detected": true,
+            "result": "Win32:BlackMatter-C [Ransom]",
+            "update": "20211111",
+            "version": "21.1.5827.0"
+        },
+        "Avira": {
+            "detected": true,
+            "result": "HEUR/AGEN.1137758",
+            "update": "20211111",
+            "version": "8.3.3.12"
+        },
+        "Baidu": {
+            "detected": false,
+            "result": null,
+            "update": "20190318",
+            "version": "1.0.0.2"
+        },
+        "BitDefender": {
+            "detected": true,
+            "result": "DeepScan:Generic.Ransom.BlackMatter.A.44DF6F1B",
+            "update": "20211111",
+            "version": "7.2"
+        },
+        "BitDefenderTheta": {
+            "detected": true,
+            "result": "AI:Packer.E9AD781E1E",
+            "update": "20211104",
+            "version": "7.2.37796.0"
+        },
+        "Bkav": {
+            "detected": true,
+            "result": "W32.AIDetect.malware1",
+            "update": "20211111",
+            "version": "1.3.0.9899"
+        },
+        "CAT-QuickHeal": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "14.00"
+        },
+        "CMC": {
+            "detected": false,
+            "result": null,
+            "update": "20211026",
+            "version": "2.10.2019.1"
+        },
+        "ClamAV": {
+            "detected": true,
+            "result": "Win.Ransomware.Blackmatter-9894377-0",
+            "update": "20211111",
+            "version": "0.104.1.0"
+        },
+        "Comodo": {
+            "detected": false,
+            "result": null,
+            "update": "20211102",
+            "version": "34044"
+        },
+        "CrowdStrike": {
+            "detected": true,
+            "result": "win/malicious_confidence_100% (W)",
+            "update": "20210203",
+            "version": "1.0"
+        },
+        "Cybereason": {
+            "detected": true,
+            "result": "malicious.b57107",
+            "update": "20210330",
+            "version": "1.2.449"
+        },
+        "Cylance": {
+            "detected": true,
+            "result": "Unsafe",
+            "update": "20211111",
+            "version": "2.3.1.101"
+        },
+        "Cynet": {
+            "detected": true,
+            "result": "Malicious (score: 100)",
+            "update": "20211111",
+            "version": "4.0.0.27"
+        },
+        "Cyren": {
+            "detected": true,
+            "result": "W32/Ransom.IDEX-9229",
+            "update": "20211111",
+            "version": "6.3.0.2"
+        },
+        "DrWeb": {
+            "detected": true,
+            "result": "Trojan.Encoder.34334",
+            "update": "20211111",
+            "version": "7.0.52.8270"
+        },
+        "ESET-NOD32": {
+            "detected": true,
+            "result": "a variant of Win32/Filecoder.BlackMatter.C",
+            "update": "20211111",
+            "version": "24275"
+        },
+        "Elastic": {
+            "detected": true,
+            "result": "malicious (high confidence)",
+            "update": "20211005",
+            "version": "4.0.29"
+        },
+        "Emsisoft": {
+            "detected": true,
+            "result": "DeepScan:Generic.Ransom.BlackMatter.A.44DF6F1B (B)",
+            "update": "20211111",
+            "version": "2021.5.0.7597"
+        },
+        "F-Secure": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "12.0.86.52"
+        },
+        "FireEye": {
+            "detected": true,
+            "result": "Generic.mg.cb1e9e0b57107c1f",
+            "update": "20211111",
+            "version": "32.44.1.0"
+        },
+        "Fortinet": {
+            "detected": true,
+            "result": "W32/BlackMatter.A!tr.ransom",
+            "update": "20211111",
+            "version": "6.2.142.0"
+        },
+        "GData": {
+            "detected": true,
+            "result": "DeepScan:Generic.Ransom.BlackMatter.A.44DF6F1B",
+            "update": "20211111",
+            "version": "A:25.31316B:27.25115"
+        },
+        "Gridinsoft": {
+            "detected": true,
+            "result": "Ransom.Win32.Gen.oa!s1",
+            "update": "20211111",
+            "version": "1.0.62.161"
+        },
+        "Ikarus": {
+            "detected": true,
+            "result": "Trojan-Ransom.BlackMatter",
+            "update": "20211111",
+            "version": "0.1.5.2"
+        },
+        "Jiangmin": {
+            "detected": false,
+            "result": null,
+            "update": "20211110",
+            "version": "16.0.100"
+        },
+        "K7AntiVirus": {
+            "detected": true,
+            "result": "Trojan ( 005811bc1 )",
+            "update": "20211111",
+            "version": "11.227.39256"
+        },
+        "K7GW": {
+            "detected": true,
+            "result": "Trojan ( 005690671 )",
+            "update": "20211111",
+            "version": "11.227.39256"
+        },
+        "Kaspersky": {
+            "detected": true,
+            "result": "UDS:Trojan-Ransom.Win32.Generic",
+            "update": "20211111",
+            "version": "21.0.1.45"
+        },
+        "Kingsoft": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "2017.9.26.565"
+        },
+        "Lionic": {
+            "detected": true,
+            "result": "Trojan.Win32.Agent.j!c",
+            "update": "20211111",
+            "version": "4.2"
+        },
+        "MAX": {
+            "detected": true,
+            "result": "malware (ai score=83)",
+            "update": "20211111",
+            "version": "2019.9.16.1"
+        },
+        "Malwarebytes": {
+            "detected": true,
+            "result": "Malware.AI.2096315471",
+            "update": "20211111",
+            "version": "4.2.2.27"
+        },
+        "MaxSecure": {
+            "detected": true,
+            "result": "Trojan.Malware.300983.susgen",
+            "update": "20211111",
+            "version": "1.0.0.1"
+        },
+        "McAfee": {
+            "detected": true,
+            "result": "GenericRXPT-HJ!CB1E9E0B5710",
+            "update": "20211111",
+            "version": "6.0.6.653"
+        },
+        "McAfee-GW-Edition": {
+            "detected": true,
+            "result": "BehavesLike.Win32.VTFlooder.lh",
+            "update": "20211111",
+            "version": "v2019.1.2+3728"
+        },
+        "MicroWorld-eScan": {
+            "detected": true,
+            "result": "DeepScan:Generic.Ransom.BlackMatter.A.44DF6F1B",
+            "update": "20211111",
+            "version": "14.0.409.0"
+        },
+        "Microsoft": {
+            "detected": true,
+            "result": "Ransom:Win32/BlackMatter.MAK!MTB",
+            "update": "20211111",
+            "version": "1.1.18700.4"
+        },
+        "NANO-Antivirus": {
+            "detected": true,
+            "result": "Virus.Win32.Gen.ccmw",
+            "update": "20211111",
+            "version": "1.0.146.25409"
+        },
+        "Paloalto": {
+            "detected": true,
+            "result": "generic.ml",
+            "update": "20211111",
+            "version": "1.0"
+        },
+        "Panda": {
+            "detected": true,
+            "result": "Trj/Genetic.gen",
+            "update": "20211111",
+            "version": "4.6.4.2"
+        },
+        "Rising": {
+            "detected": true,
+            "result": "Trojan.Generic@ML.94 (RDMK:rmV/xmwEfbaQ/DWgSbr1Rw)",
+            "update": "20211111",
+            "version": "25.0.0.26"
+        },
+        "SUPERAntiSpyware": {
+            "detected": false,
+            "result": null,
+            "update": "20211106",
+            "version": "5.6.0.1032"
+        },
+        "Sangfor": {
+            "detected": false,
+            "result": null,
+            "update": "20211103",
+            "version": "2.9.0.0"
+        },
+        "SentinelOne": {
+            "detected": true,
+            "result": "Static AI - Malicious PE",
+            "update": "20211028",
+            "version": "6.3.0.2"
+        },
+        "Sophos": {
+            "detected": true,
+            "result": "ML/PE-A + Troj/BlackMat-B",
+            "update": "20211111",
+            "version": "1.4.1.0"
+        },
+        "Symantec": {
+            "detected": true,
+            "result": "Ransom.Darkside!gen5",
+            "update": "20211111",
+            "version": "1.16.0.0"
+        },
+        "TACHYON": {
+            "detected": true,
+            "result": "Ransom/W32.BlackMatter.79872",
+            "update": "20211111",
+            "version": "2021-11-11.02"
+        },
+        "Tencent": {
+            "detected": true,
+            "result": "Malware.Win32.Gencirc.10cee34b",
+            "update": "20211111",
+            "version": "1.0.0.1"
+        },
+        "TrendMicro": {
+            "detected": true,
+            "result": "Ransom.Win32.BLACKMATTER.SMYXBHMT",
+            "update": "20211111",
+            "version": "11.0.0.1006"
+        },
+        "TrendMicro-HouseCall": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "10.0.0.1040"
+        },
+        "VBA32": {
+            "detected": true,
+            "result": "TScope.Malware-Cryptor.SB",
+            "update": "20211111",
+            "version": "5.0.0"
+        },
+        "VIPRE": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "96880"
+        },
+        "ViRobot": {
+            "detected": true,
+            "result": "Trojan.Win32.Ransom.80896.F",
+            "update": "20211111",
+            "version": "2014.3.20.0"
+        },
+        "Webroot": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": "1.0.0.403"
+        },
+        "Yandex": {
+            "detected": true,
+            "result": "Trojan.Encoder!tlTvXNFaIrI",
+            "update": "20211111",
+            "version": "5.5.2.24"
+        },
+        "Zillya": {
+            "detected": true,
+            "result": "Trojan.Encoder.Win32.2652",
+            "update": "20211111",
+            "version": "2.0.0.4494"
+        },
+        "Zoner": {
+            "detected": false,
+            "result": null,
+            "update": "20211110",
+            "version": "2.2.2.0"
+        },
+        "eGambit": {
+            "detected": false,
+            "result": null,
+            "update": "20211111",
+            "version": null
+        }
+    },
+    "sha1": "53f0be750671f565019890a35d8463eebc6fddc9",
+    "sha256": "496cd9b6b6b96d6e781ab011d1d02ac3fc3532c8bdd07cae5d43286da6e4838d",
+    "size": 79872,
+    "ssdeep": "1536:6nICS4ArFnRoHhcVyid9EZZoi+zQK2Vg6N:lZnmqVyq9EN+Mb",
+    "submission_names": [
+        "z:\\Python\u662f\u5c08\u6848\\\u56fe\u6807\u7684\u5927\u5c0f\\build\\\\runner.bin",
+        "z:\\GoProject\\\u901a\u8fc7\u7387\\build\\\u904b\u884c\u7a0b\u5e8f/.dll",
+        "z:\\GoProject\\\u5fae\u4fe1\u4e0b\u8f09\u5668\\build\\\\\u6709\u6548\u8ca0\u8f09.bat",
+        "z:\\PythonProject\\\u6d29\u9732QQ\\build\\\\dev.bin",
+        "z:\\GoProject\\\u6296\u97f3\u4e0b\u8f09\u5668\\build\\\u958b\u767c/.js",
+        "z:\\GoProject\\\u7684Go\u89e3\u7b54\\build\\\\main.exe",
+        "z:\\GoProject\\\u7684Go\u89e3\u7b54\\build\\\u958b\u767c/.exe",
+        "z:\\GoProject\\Qiang\\build\\dev/.bin",
+        "z:\\PythonProject\\\u6d29\u9732QQ\\build\\\\\u7522.dll",
+        "z:\\GoProject\\Qiang\\build\\\u4e3b\u8981/.dll",
+        "z:\\GoProject\\\u5fae\u4fe1\u4e0b\u8f09\u5668\\build\\\\\u6709\u6548\u8ca0\u8f09.js",
+        "z:\\PythonProject\\\u6d29\u9732QQ\\build\\\\\u958b\u767c.exe",
+        "z:\\GoProject\\\u5fae\u4fe1\u4e0b\u8f09\u5668\\build\\payload/.bin",
+        "z:\\GoProject\\\u6296\u97f3\u4e0b\u8f09\u5668\\build\\\\\u904b\u884c\u7a0b\u5e8f.dll",
+        "z:\\GoProject\\\u56fe\u6807\u7684\u5927\u5c0f\\build\\runner/.dll",
+        "z:\\GoProject\\\u56fe\u6807\u7684\u5927\u5c0f\\build\\\u751f\u7522/.bat"
+    ],
+    "tags": [
+        "checks-network-adapters",
+        "malware",
+        "runtime-modules",
+        "direct-cpu-clock-access",
+        "peexe"
+    ],
+    "times_submitted": 1,
+    "total": 68,
+    "type": "Win32 EXE",
+    "unique_sources": 1,
+    "verbose_msg": "Scan finished, information embedded",
+    "vhash": "074056651d7d7567z91z5nz5fz"
+}

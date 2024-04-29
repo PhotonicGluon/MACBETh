@@ -156,6 +156,7 @@ api_key.txt
 
 data
 !data/hashes.txt
+!data/sample.json
 !data/README.md
 
 checkpoint*
