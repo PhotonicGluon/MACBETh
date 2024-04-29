@@ -82,6 +82,7 @@ def clustering(cluster_method: str, dim_reduction_method: str, num_cluters_overr
     coordinates, _ = reports_to_coordinates(data, num_unigrams=1000, seed=42)
 
     # Get the labels
+    print("Getting labels...")
     reduced_coordinates, labels, unique_labels = get_labels(
         coordinates,
         dim_reduction_method=dim_reduction_method,
@@ -90,6 +91,7 @@ def clustering(cluster_method: str, dim_reduction_method: str, num_cluters_overr
     )
 
     # Plot the coordinates
+    print("Plotting coordinates...")
     for unique_label in unique_labels:
         plt.scatter(
             reduced_coordinates[labels == unique_label, 0],
