@@ -152,6 +152,8 @@ cython_debug/
 #.idea/
 
 # Others
+.DS_Store
+
 api_key.txt
 
 data

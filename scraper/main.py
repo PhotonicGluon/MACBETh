@@ -27,8 +27,11 @@ with open("../data/hashes.txt", "r") as f:
     all_hashes = set([x.strip() for x in f.readlines()])
 
 # Get all of the hashes that we have already processed
-with open("../data/done-hashes.txt", "r") as f:
-    done_hashes = set([x.strip() for x in f.readlines()])
+try:
+    with open("../data/done-hashes.txt", "r") as f:
+        done_hashes = set([x.strip() for x in f.readlines()])
+except FileNotFoundError:
+    done_hashes = set()
 
 # Remove all the done hashes from the master list
 hashes = all_hashes.difference(done_hashes)
