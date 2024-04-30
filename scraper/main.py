@@ -201,7 +201,7 @@ hashes = all_hashes.difference(done_hashes)
 threads = []
 for i, api_key in enumerate(api_keys):
     # Create panels
-    gPanels.append(Panel("Loading...", title=f"[b frame]Worker {i+1}"))
+    gPanels.append(Panel("Loading...", title=f"[b frame]Worker with key '{api_key[:8]}...'"))
 
     # Create the thread
     t = Thread(target=worker, args=(i, api_key))
