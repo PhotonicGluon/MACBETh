@@ -16,6 +16,9 @@ if API_KEY is None:
     print("Please set the `API_KEY` environment variable first.")
     exit(1)
 
+# Check that the folders exist
+os.makedirs("../data/vt-data", exist_ok=True)
+
 # INPUT
 # Get all the hashes that we have
 with open("../data/hashes.txt", "r") as f:
@@ -74,6 +77,10 @@ while failure_count < CONSECUTIVE_FAILURE_COUNT:
 
     except KeyboardInterrupt:
         print("\nRequest to stop received.")
+        break
+    except Exception as e:
+        print(f"\nAn error occured: {e}")
+        print("Stopping.")
         break
 
 if failure_count >= CONSECUTIVE_FAILURE_COUNT:
