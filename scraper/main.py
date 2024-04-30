@@ -1,9 +1,11 @@
 # IMPORTS
 import os
 import time
+from datetime import datetime
 from threading import Thread, Event, Lock
 
-from rich import print
+from rich import print, box
+from rich.align import Align
 from rich.columns import Columns
 from rich.console import Group, RenderableType
 from rich.live import Live
@@ -19,6 +21,7 @@ CONSECUTIVE_FAILURE_COUNT = 3  # Don't continue processing if there are this man
 
 FAILURE_SLEEP_DURATION = 15
 SUCCESS_SLEEP_DURATION = 5
+NOT_YET_PROCESSED_SLEEP_DURATION = 3
 SLEEP_INTERVAL = 0.05
 
 # GLOBAL VARIABLES
@@ -40,6 +43,17 @@ os.makedirs("../data/vt-data", exist_ok=True)
 
 
 # FUNCTIONS
+def get_current_time() -> str:
+    """
+    Gets and formats the current time
+
+    :return: current time formatted as a string
+    """
+
+    now = datetime.now()
+    return now.strftime("%Y-%m-%d %H:%M:%S")
+
+
 def worker(worker_id: int, api_key: str):
     """
     Thread worker.
@@ -123,7 +137,7 @@ def worker(worker_id: int, api_key: str):
                 gAllHashesLock.release()
 
                 pretty_sleep(
-                    SUCCESS_SLEEP_DURATION,
+                    NOT_YET_PROCESSED_SLEEP_DURATION,
                     SLEEP_INTERVAL,
                     Group(
                         Text.from_markup(f"[u b yellow]Notice", justify="center"),
@@ -211,16 +225,23 @@ for i, api_key in enumerate(api_keys):
 print("Press Ctrl + C to stop early.\n")
 
 process_columns = Columns(gPanels)
-with Live(process_columns, refresh_per_second=5) as live:
+process_panel = Panel(
+    Align(process_columns, align="center"), box=box.SIMPLE_HEAD, title=Text(get_current_time(), style="green")
+)
+
+with Live(process_panel, refresh_per_second=5) as live:
     while not gStopEarly.is_set():
         gFinishCountLock.acquire()
         if gFinishCount >= len(api_keys):
             break
         gFinishCountLock.release()
 
+        # Update current time
+        process_panel.title = Text(get_current_time(), style="green")
+
         try:
             time.sleep(0.25)
-            live.update(process_columns)
+            live.update(process_panel)
         except KeyboardInterrupt:
             gStopEarly.set()
             break
