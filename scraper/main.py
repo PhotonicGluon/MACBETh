@@ -16,6 +16,8 @@ if API_KEY is None:
     print("Please set the `API_KEY` environment variable first.")
     exit(1)
 
+print(f"Using API key '{API_KEY}'")
+
 # Check that the folders exist
 os.makedirs("../data/vt-data", exist_ok=True)
 
