@@ -1,7 +1,7 @@
 # IMPORTS
 import os
 
-from label_malware_samples import label_sample
+from labelling import label_sample
 from misc import pretty_sleep
 from virustotal import *
 
