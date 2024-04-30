@@ -6,7 +6,7 @@ from misc import pretty_sleep
 from virustotal import *
 
 # CONSTANTS
-CONSECUTIVE_FAILURE_COUNT = 3  # Don't continue processing if there are this many failures in a row
+CONSECUTIVE_FAILURE_COUNT = 5  # Don't continue processing if there are this many failures in a row
 FAILURE_SLEEP_DURATION = 15
 API_KEY = os.getenv("API_KEY", None)
 
