@@ -1,6 +1,8 @@
 # IMPORTS
+import hashlib
 import os
 import json
+import random
 import re
 import subprocess
 import shutil
@@ -8,6 +10,16 @@ from typing import List, Optional
 
 
 # HELPER FUNCTIONS
+def _random_hash() -> str:
+    """
+    Generates a random hash.
+
+    :return: random hash
+    """
+
+    return hashlib.sha256(str(random.random()).encode()).hexdigest()
+
+
 def _run_avclass(*args: List[str]) -> str:
     """
     Runs the `avclass` command.
@@ -64,12 +76,14 @@ def label_sample(report_json: dict) -> str:
     cannot be understood, while "BENIGN" means that the sample is (likely) harmless
     """
 
+    temp_file = f"temp-{_random_hash()}.json"
+
     # We need to place the report in a JSON file for use by `avclass`
-    with open("temp.json", "w") as f:
+    with open(temp_file, "w") as f:
         json.dump(report_json, f)
 
     # Try to get the label using default methods
-    output = _run_avclass("-f", "temp.json")
+    output = _run_avclass("-f", temp_file)
     splitted = output.split()
 
     if len(splitted) == 2:
@@ -81,12 +95,12 @@ def label_sample(report_json: dict) -> str:
     else:
         label = _majority_rules_labelling()
 
-    os.remove("temp.json")
-    
+    os.remove(temp_file)
+
     # As a last resort, if it is a known distributor, it should be benign
-    if label == "unknown" and "known-distributer" in report_json.get("tags", []):
+    if label == "unknown" and "known-distributor" in report_json.get("tags", []):
         label = "benign"
-        
+
     return label.upper()
 
 

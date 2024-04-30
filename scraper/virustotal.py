@@ -65,7 +65,6 @@ def get_report(resource_hash: str, api_key: str, retry: int = 5, delay: float = 
     url = f"https://www.virustotal.com/vtapi/v2/file/report?apikey={api_key}&resource={resource_hash}&allinfo=1"
     count = 1
     while count <= retry:
-        print(f"\33[2K\rRetrieving '{resource_hash}' (Try {count}/{retry})", end="")
         try:
             r = requests.get(url)
         except requests.exceptions.SSLError:
@@ -76,7 +75,6 @@ def get_report(resource_hash: str, api_key: str, retry: int = 5, delay: float = 
             count += 1
         else:
             break
-    print()
 
     if r.status_code != 200:
         return False, None

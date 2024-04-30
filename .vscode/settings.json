@@ -1,3 +1,10 @@
 {
-    "black-formatter.args": ["--line-length", "120"]
+    "black-formatter.args": [
+        "--line-length",
+        "120"
+    ],
+    "cSpell.words": [
+        "renderable",
+        "virustotal"
+    ]
 }
