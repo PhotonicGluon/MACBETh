@@ -3,6 +3,7 @@ import os
 import time
 from datetime import datetime
 from threading import Thread, Event, Lock
+from typing import Optional
 
 from rich import print, box
 from rich.align import Align
@@ -11,7 +12,7 @@ from rich.console import Group, RenderableType
 from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress
-from rich.text import Text
+from rich.text import Text, TextType
 
 from labelling import label_sample
 from virustotal import *
@@ -82,18 +83,27 @@ def worker(worker_id: int, api_key: str):
     global hashes
 
     # Helper functions
-    def update_panel(renderable: RenderableType):
+    def update_panel(renderable: RenderableType, subtitle: Optional[TextType] = None):
         """
-        Updates the panel with the specified renderable.
+        Updates the panel with the specified renderable and subtitle.
 
         :param renderable: renderable to set on the panel
+        :param subtitle: subtitle of the panel, defaults to None
         """
 
         gPanelsLock.acquire()
         gPanels[worker_id].renderable = renderable
+        if subtitle is not None:
+            gPanels[worker_id].subtitle = subtitle
         gPanelsLock.release()
 
-    def pretty_sleep(duration: float, interval: float, group_renderable: RenderableType, prog_desc: str = "Timeout"):
+    def pretty_sleep(
+        duration: float,
+        interval: float,
+        group_renderable: RenderableType,
+        prog_desc: str = "Timeout",
+        panel_subtitle: Optional[TextType] = None,
+    ):
         """
         Produces a nice sleep progress bar in the panel.
 
@@ -101,12 +111,13 @@ def worker(worker_id: int, api_key: str):
         :param interval: interval between updates
         :param group_renderable: renderable to display above the progress bar
         :param prog_desc: description for the progress bar, defaults to "Timeout"
+        :param subtitle: subtitle of the panel, defaults to None
         """
 
         wait_progress = Progress()
         wait_task = wait_progress.add_task(prog_desc, total=duration // interval)
 
-        update_panel(Group(group_renderable, wait_progress))
+        update_panel(Group(group_renderable, wait_progress), subtitle=panel_subtitle)
 
         while not wait_progress.finished:
             time.sleep(interval)
@@ -114,6 +125,7 @@ def worker(worker_id: int, api_key: str):
 
     # Main code
     failure_count = 0
+    success_count = 0
     while failure_count < CONSECUTIVE_FAILURE_COUNT and not gStopEarly.is_set():
         try:
             # Get the next hash to process
@@ -179,8 +191,12 @@ def worker(worker_id: int, api_key: str):
                 json.dump(report, f, indent=4)
 
             # Report success
+            success_count += 1
             pretty_sleep(
-                SUCCESS_SLEEP_DURATION, SLEEP_INTERVAL, Text.from_markup(f"[b green]Success", justify="center")
+                SUCCESS_SLEEP_DURATION,
+                SLEEP_INTERVAL,
+                Text.from_markup(f"[b green]Success", justify="center"),
+                panel_subtitle=f"Retrieved {success_count} reports"
             )
 
         except Exception as e:
@@ -230,7 +246,7 @@ hashes = all_hashes.difference(done_hashes)
 threads = []
 for i, api_key in enumerate(api_keys):
     # Create panels
-    gPanels.append(Panel("Loading...", title=f"[b frame]Worker with key '{api_key[:8]}...'"))
+    gPanels.append(Panel("Loading...", title=f"[b frame]Worker with key '{api_key[:8]}...'", subtitle=f"Retrieved 0 reports"))
 
     # Create the thread
     t = Thread(target=worker, args=(i, api_key))
