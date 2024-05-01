@@ -54,6 +54,21 @@ def get_current_time() -> str:
     return now.strftime("%Y-%m-%d %H:%M:%S")
 
 
+def get_elapsed_time(start_time: datetime.time) -> str:
+    """
+    Gets the time from the `start_time` till now, and returns it as a formatted string.
+
+    :param start_time: starting time
+    :return: time elapsed
+    """
+
+    now = datetime.now()
+    elapsed_time = now - start_time
+    total_seconds = int(elapsed_time.total_seconds())
+
+    return f"{total_seconds//3600:02d}:{total_seconds%3600 //60:02d}:{total_seconds%60:02d}"
+
+
 def worker(worker_id: int, api_key: str):
     """
     Thread worker.
@@ -224,20 +239,24 @@ for i, api_key in enumerate(api_keys):
 
 print("Press Ctrl + C to stop early.\n")
 
-process_columns = Columns(gPanels)
-process_panel = Panel(
-    Align(process_columns, align="center"), box=box.SIMPLE_HEAD, title=Text(get_current_time(), style="green")
-)
+start_time = datetime.now()
 
-with Live(process_panel, refresh_per_second=5) as live:
+process_columns = Columns(gPanels)
+process_panel_group = Group(
+    Align(Text(get_elapsed_time(start_time), style="green"), align="center"), Align(process_columns, align="center")
+)
+process_panel = Panel(process_panel_group, box=box.SIMPLE_HEAD, title=Text(get_current_time(), style="green"))
+
+with Live(process_panel, refresh_per_second=10) as live:
     while not gStopEarly.is_set():
         gFinishCountLock.acquire()
         if gFinishCount >= len(api_keys):
             break
         gFinishCountLock.release()
 
-        # Update current time
+        # Update times
         process_panel.title = Text(get_current_time(), style="green")
+        process_panel_group.renderables[0] = Align(Text(get_elapsed_time(start_time), style="green"), align="center")
 
         try:
             time.sleep(0.25)
