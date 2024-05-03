@@ -33,15 +33,16 @@ def _run_avclass(*args: List[str]) -> str:
     return output.decode("UTF-8").strip()
 
 
-def _majority_rules_labelling() -> Optional[str]:
+def _majority_rules_labelling(temp_file: str) -> Optional[str]:
     """
-    Use majority rules for labelling the sample located in `temp.json`
+    Use majority rules for labelling the sample located in the temporary file.
 
+    :param temp_file: temporary file to run family tagging on
     :returns: supposed label
     """
 
     # Use family tagging by considering the other AVs reports
-    output = _run_avclass("-f", "temp.json", "-t")  # -t means tag families
+    output = _run_avclass("-f", temp_file, "-t")  # -t means tag families
     splitted = output.split()
 
     if len(splitted) < 2 or not splitted[1].isdigit():
@@ -91,9 +92,9 @@ def label_sample(report_json: dict) -> str:
 
         # If the label starts with "SINGLETON", we can't attribute this sample using the default way
         if label.startswith("SINGLETON"):
-            label = _majority_rules_labelling()
+            label = _majority_rules_labelling(temp_file)
     else:
-        label = _majority_rules_labelling()
+        label = _majority_rules_labelling(temp_file)
 
     os.remove(temp_file)
 
