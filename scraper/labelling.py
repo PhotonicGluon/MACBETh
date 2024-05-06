@@ -111,10 +111,10 @@ if __name__ == "__main__":
 
     os.makedirs("data/labelled-data", exist_ok=True)
 
-    data_files = os.listdir("../data/vt-data")
+    data_files = os.listdir("../data/json")
 
     for file in tqdm(data_files, desc="Labelling samples"):
-        filepath = f"../data/vt-data/{file}"
+        filepath = f"../data/json/{file}"
 
         with open(filepath, "r") as f:
             report = json.load(f)

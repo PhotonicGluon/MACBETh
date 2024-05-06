@@ -31,10 +31,10 @@ def update_done_hashes():
     """
 
     # Get all the JSON data from the files we downloaded
-    data_files = os.listdir("../data/vt-data")
+    data_files = os.listdir("../data/json")
     all_json_data = []
     for file in data_files:
-        with open(f"../data/vt-data/{file}", "r") as f:
+        with open(f"../data/json/{file}", "r") as f:
             all_json_data.append(json.load(f))
 
     # Get all the hashes from the JSON data

@@ -40,7 +40,7 @@ gPanelsLock = Lock()
 
 # SET-UP
 # Check that the folders exist
-os.makedirs("../data/vt-data", exist_ok=True)
+os.makedirs("../data/json", exist_ok=True)
 
 
 # FUNCTIONS
@@ -187,7 +187,7 @@ def worker(worker_id: int, api_key: str):
             label = label_sample(report)
 
             # Write the JSON report to disk
-            with open(f"../data/vt-data/{label}_{sha256}.json", "w") as f:
+            with open(f"../data/json/{label}_{sha256}.json", "w") as f:
                 json.dump(report, f, indent=4)
 
             # Report success
