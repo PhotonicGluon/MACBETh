@@ -1,11 +1,29 @@
 # IMPORTS
 import os
 from argparse import ArgumentParser, ArgumentTypeError
+from itertools import cycle, islice
 from typing import Any
 
 import json
 
 from clustering import VALID_CLUSTERING_METHODS, VALID_DIMENSIONALITY_REDUCING_METHODS
+
+# CONSTANTS
+MARKERS = [
+    "o", "d", "s", "p", "P", "*", "h", "D", "v", "^", "<", ">", "X"
+]
+
+
+# MISC FUNCTIONS
+def repeat_list(list_: list, count: int) -> list:
+    """
+    Repeats the specified list until having `count` elements.
+
+    :param list_: list to repeat
+    :param count: number of elements to have in the final list
+    :return: final list with repeated elements
+    """
+    return list(islice(cycle(list_), count))
 
 
 # ARGUMENT VALIDATION FUNCTIONS
@@ -92,11 +110,13 @@ def clustering(cluster_method: str, dim_reduction_method: str, num_cluters_overr
 
     # Plot the coordinates
     print("Plotting coordinates...")
+    num_unique_labels = len(unique_labels)
     for unique_label in unique_labels:
         plt.scatter(
             reduced_coordinates[labels == unique_label, 0],
             reduced_coordinates[labels == unique_label, 1],
             label=unique_label,
+            marker=repeat_list(MARKERS, num_unique_labels)[unique_label]
         )
     plt.legend()
     plt.show()
