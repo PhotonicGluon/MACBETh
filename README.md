@@ -1,4 +1,4 @@
-# MACBETh - Malware Analysis and Classification Based on Elements in Threats
+![MACBETh Banner](./img/banner.png)
 
 Analyses malware based on its attributes, and helps classify malware based on reports generated in VirusTotal.
 
